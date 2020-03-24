@@ -34,16 +34,51 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+import { AuthService } from './services/auth-service';
+import Login from './pages/login/Login';
+
+
+const authService = new AuthService();
+
+authService.loadToken();
+
 const App: React.FC = () => (
+
   <IonApp>
     <IonReactRouter>
+      <Route path="/tab1" component={Tab1} exact={true} />
+      <Route path="/login" component={Login} />
+      <Route exact path="/" render={
+        () => {
+
+          if (authService.user && authService.user.length > 0) {
+            return <Redirect to="/tab1" />
+          } else {
+            return <Redirect to="/login" />;
+          }
+        }
+      } />
+     
+    </IonReactRouter>
+  </IonApp>
+);
+
+export function handleLogout(props: any) {
+
+  const authService = new AuthService();
+
+  authService.logout().then(() => {
+    props.history.push('/');
+  });
+}
+ /*
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/tab1" component={Tab1} exact={true} />
           <Route path="/tab2" component={Tab2} exact={true} />
           <Route path="/tab3" component={Tab3} />
-          <Route path="/" render={() => <Redirect to="/tab1" />} exact={true} />
         </IonRouterOutlet>
+
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
             <IonIcon icon={triangle} />
@@ -58,9 +93,7 @@ const App: React.FC = () => (
             <IonLabel>Tab 3</IonLabel>
           </IonTabButton>
         </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
 
+      </IonTabs>
+      */
 export default App;
